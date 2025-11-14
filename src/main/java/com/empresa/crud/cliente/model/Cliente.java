@@ -30,7 +30,7 @@ public class Cliente {
     @Column(nullable = false) //Protejer o banco de dados de entrada nulas //RN04
     private String nome;
     @NotBlank(message = "CPF é obrigatório") //RN01
-    @Column(nullable = false, unique = true) // RN03
+    @Column(nullable = false, unique = true) //RN03
     private String cpf;
     @Past(message = "A date de nascimento deve ser anterior a data atual") //RN05
     private LocalDate dataNascimento;
