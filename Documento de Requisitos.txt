@@ -1,0 +1,42 @@
+Tecnologias que serão utilizadas
+Spring Boot
+Hibernate
+HTML, CSS, JavaScript
+Banco de dados relacional (MySQL)
+
+REQUISITOS FUNCIONAIS
+RF01: O sistema deve permitir o cadastrado de clientes com os seguintes dados: Nome, CPF, Dada de Nascimento e Endereço;
+
+RF02: O Sistema deve permitir a edição dos dados de um cliente cadastrado;
+
+RF03: O sistema deve permitir a exclusão de um cliente cadastrado;
+
+RF04: O sistema deve permitir a listagem de todos os clientes cadastrados;
+
+RF05: O sistema deve permitir a busca de um cliente pelo Nome ou CPF;
+
+RF06: O sistema deve permitir o cadastro de contatos para um cliente, contendo os seguintes dados: Tipo do Contato(Telefone, E-mail), Valor do Contato (número ou e-mail) e Observação;
+
+RF07: O sistema deve permitir a edição dos contatos de um cliente;
+
+RF08: O sistema deve permitir a exclusão de um contato de um cliente;
+
+RF09: O sistema deve permitir a listagem de todos os contato de um cliente específico.
+
+REQUISITOS NÃO FUNCIONAIS
+
+RN01: Os campos Nome e CPF são obrigatórios no cadastro do cliente
+
+RN02: Os campos Tipo do Contato e Valor do Contato são obrigatórios no cadastro do contato;
+
+RN03: O CPF informado deve ser único no sistema
+
+RN04: O Nome do cliente não pode estar vazio;
+
+RN05: A Data de Nascimento deve ser válida; ( não pode ser uma data no futuro)
+
+RN06: Um cliente pode ter mais de um contato cadastrado;
+
+RN07: Ao excluir um cliente, todos os seus contatos deve ser removidos do sistema;
+
+RN08: O sistema deve validar os dados informados antes de permitir o cadastro ou edição
