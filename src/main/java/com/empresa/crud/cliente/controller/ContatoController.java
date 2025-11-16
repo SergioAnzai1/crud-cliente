@@ -3,6 +3,8 @@ package com.empresa.crud.cliente.controller;
 import com.empresa.crud.cliente.service.ContatoService;
 import com.empresa.crud.cliente.model.Contato;
 import com.empresa.crud.cliente.DTO.ContatoDTO;
+import com.empresa.crud.cliente.service.ClienteService;
+import com.empresa.crud.cliente.model.Cliente;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -27,9 +29,14 @@ public class ContatoController {
     @Autowired
     private ContatoService contatoService;
 
+    @Autowired
+    private ClienteService clienteService;
+
     @PostMapping
     public ResponseEntity<ContatoDTO> salvar(@Valid @RequestBody ContatoDTO contatoDTO) {
         Contato contato = contatoDTO.toEntity();
+        Cliente cliente = clienteService.buscarClientePorId(contatoDTO.getClienteId());
+        contato.setCliente(cliente);
         Contato contatoSalvo = contatoService.salvar(contato);
         ContatoDTO dto = ContatoDTO.fromEntity(contatoSalvo);
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
@@ -37,6 +44,8 @@ public class ContatoController {
     @PutMapping("/{id}")
     public ResponseEntity<ContatoDTO> atualizar(@PathVariable Long id,@Valid @RequestBody ContatoDTO contatoDTO) {
         Contato contato = contatoDTO.toEntity();
+        Cliente cliente = clienteService.buscarClientePorId(contatoDTO.getClienteId());
+        contato.setCliente(cliente);
         Contato contatoAtualizado = contatoService.atualizar(id, contato);
         ContatoDTO dto = ContatoDTO.fromEntity(contatoAtualizado);
         return ResponseEntity.ok(dto);

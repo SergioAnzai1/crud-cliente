@@ -8,9 +8,6 @@ import lombok.Setter;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
-import jakarta.persistence.Id;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.EnumType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.NotBlank;
 
@@ -19,11 +16,8 @@ import jakarta.validation.constraints.NotBlank;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ContatoDTO {
-    
-    @Id
-    private Long id;
 
-    @Enumerated(EnumType.STRING)
+    private Long id;
     @NotNull(message = "Tipo de contato é obrigatório")
     private TipoContato tipoContato;
 
@@ -32,12 +26,15 @@ public class ContatoDTO {
 
     private String observacao;
 
+    private Long clienteId;
+
     public static ContatoDTO fromEntity(Contato contato) {
         ContatoDTO dto = new ContatoDTO();
         dto.setId(contato.getId());
         dto.setTipoContato(contato.getTipoContato());
         dto.setValorContato(contato.getValorContato());
         dto.setObservacao(contato.getObservacao());
+        dto.setClienteId(contato.getCliente().getId());
         return dto;
     }
     public Contato toEntity() {
