@@ -110,8 +110,19 @@ th:nth-child(4), td:nth-child(4) {
 }
 
 th:nth-child(6), td:nth-child(6) {
-    width: 150px;
+    width: 250px;
     text-align: center;
+}
+
+.td-acoes {
+    padding: 0.5rem !important;
+}
+
+.botoes-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    width: 100%;
 }
 .form-group label {
     display: block;
@@ -127,11 +138,32 @@ th:nth-child(6), td:nth-child(6) {
     font-size: 1rem;
     transition: all 0.3s ease;
 }
-.form-group input:focus {
+.form-group input:focus,
+.form-group select:focus {
     outline: none;
     border-color: #2196F3;
     box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
     transform: translateY(-1px);
+}
+
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: white;
+    cursor: pointer;
+}
+
+.form-group select.error {
+    border-color: #f44336;
+}
+
+.form-group select.error:focus {
+    border-color: #f44336;
+    box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.1);
 }
 .form-group input.error {
     border-color: #f44336;
@@ -289,16 +321,36 @@ th:nth-child(6), td:nth-child(6) {
         padding-top: 60px;
     }
 }
-/*Botões Editar e Excluir*/
-.btn-editar, .btn-excluir {
-    padding: 0.4rem 0.8rem;
+/*Botões Editar, Excluir, Contato e Ver Contatos*/
+.btn-editar, .btn-excluir, .btn-contato, .btn-ver-contatos {
+    padding: 0.4rem 0.6rem;
     border: none;
     border-radius: 4px;
-    font-size: 0.875rem;
+    font-size: 0.8rem;
     font-weight: 500;
     cursor: pointer;
-    margin: 0 0.25rem;
+    margin: 0;
     transition: all 0.3s ease;
+    width: 100%;
+    white-space: nowrap;
+}
+
+.btn-ver-contatos {
+    background-color: #FF9800;
+    color: white;
+}
+
+.btn-ver-contatos:hover {
+    background-color: #F57C00;
+}
+
+.btn-contato {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.btn-contato:hover {
+    background-color: #45a049;
 }
 
 .btn-editar {
@@ -318,12 +370,52 @@ th:nth-child(6), td:nth-child(6) {
 .btn-excluir:hover {
     background-color: #d32f2f;
 }
-td .btn-editar, td .btn-excluir {
+.botoes-container .btn-editar, 
+.botoes-container .btn-excluir, 
+.botoes-container .btn-contato, 
+.botoes-container .btn-ver-contatos {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-td .btn-editar:hover, td .btn-excluir:hover {
+
+.botoes-container .btn-editar:hover, 
+.botoes-container .btn-excluir:hover, 
+.botoes-container .btn-contato:hover, 
+.botoes-container .btn-ver-contatos:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+.btn-editar-contato, .btn-excluir-contato {
+    padding: 0.3rem 0.6rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    margin: 0 0.25rem;
+    transition: all 0.3s ease;
+}
+
+.btn-editar-contato {
+    background-color: #2196F3;
+    color: white;
+}
+
+.btn-editar-contato:hover {
+    background-color: #1976D2;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.btn-excluir-contato {
+    background-color: #f44336;
+    color: white;
+}
+
+.btn-excluir-contato:hover {
+    background-color: #d32f2f;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* Modal de Edição */
@@ -349,6 +441,10 @@ td .btn-editar:hover, td .btn-excluir:hover {
     width: 90%;
     max-width: 600px;
     animation: slideDown 0.3s ease;
+}
+
+.modal-content-large {
+    max-width: 800px;
 }
 
 @keyframes slideDown {
@@ -378,7 +474,7 @@ td .btn-editar:hover, td .btn-excluir:hover {
     font-size: 1.5rem;
 }
 
-.modal-close {
+.modal-close, .modal-close-contato, .modal-close-ver-contatos, .modal-close-editar-contato {
     color: white;
     font-size: 2rem;
     font-weight: bold;
@@ -388,13 +484,29 @@ td .btn-editar:hover, td .btn-excluir:hover {
 }
 
 .modal-close:hover,
-.modal-close:focus {
+.modal-close:focus,
+.modal-close-contato:hover,
+.modal-close-contato:focus,
+.modal-close-ver-contatos:hover,
+.modal-close-ver-contatos:focus,
+.modal-close-editar-contato:hover,
+.modal-close-editar-contato:focus {
     transform: scale(1.2);
     color: #E3F2FD;
 }
 
 .modal-content form {
     padding: 2rem;
+}
+
+.modal-body {
+    padding: 2rem;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.modal-body table {
+    margin-top: 0;
 }
 
 /* Responsividade do Modal */
