@@ -22,7 +22,14 @@
     <div class="cliente-card">
         <div class="container">
             <div class="cliente-list">
-                <h2>Lista de Clientes</h2>
+                <div class="header-list">
+                    <h2>Lista de Clientes</h2>
+                    <div class="search-container">
+                        <input type="text" id="campoBusca" placeholder="Buscar por nome ou CPF..." class="search-input">
+                        <button type="button" id="btnBuscar" class="btn-buscar">🔍 Buscar</button>
+                        <button type="button" id="btnLimparBusca" class="btn-limpar" style="display: none;">Limpar</button>
+                    </div>
+                </div>
                 <table>
                     <thead>
                         <tr>

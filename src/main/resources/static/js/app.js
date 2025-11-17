@@ -4,6 +4,33 @@ document.addEventListener('DOMContentLoaded', function(){
     if(tbodyClientes) {
         carregarClientes();
     }
+
+    // Event listeners para busca
+    const campoBusca = document.getElementById('campoBusca');
+    const btnBuscar = document.getElementById('btnBuscar');
+    const btnLimparBusca = document.getElementById('btnLimparBusca');
+
+    if (btnBuscar) {
+        btnBuscar.addEventListener('click', function() {
+            buscarClientes();
+        });
+    }
+
+    if (campoBusca) {
+        campoBusca.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                buscarClientes();
+            }
+        });
+    }
+
+    if (btnLimparBusca) {
+        btnLimparBusca.addEventListener('click', function() {
+            campoBusca.value = '';
+            btnLimparBusca.style.display = 'none';
+            carregarClientes();
+        });
+    }
     function excluirCliente(id, nome) {
         if (confirm("Deseja realmente excluir o cliente " + nome + "?")) {
             fetch('/clientes/' + id, {
@@ -12,7 +39,13 @@ document.addEventListener('DOMContentLoaded', function(){
             .then(function(response) {
                 if (response.ok) {
                     alert('Cliente excluido com sucesso!');
-                    carregarClientes();
+                    // Verificar se há busca ativa
+                    const termo = document.getElementById('campoBusca').value.trim();
+                    if (termo) {
+                        buscarClientes();
+                    } else {
+                        carregarClientes();
+                    }
                 } else {
                     alert('Erro ao excluir cliente.');
                 }
@@ -24,95 +57,127 @@ document.addEventListener('DOMContentLoaded', function(){
         }
     }
     
+    // Função para buscar clientes por nome ou CPF
+    function buscarClientes() {
+        const termo = document.getElementById('campoBusca').value.trim();
+        const btnLimparBusca = document.getElementById('btnLimparBusca');
+        
+        if (!termo) {
+            alert('Por favor, digite um nome ou CPF para buscar.');
+            return;
+        }
+
+        fetch('/clientes/buscar?termo=' + encodeURIComponent(termo))
+            .then(response => response.json())
+            .then(clientes => {
+                exibirClientes(clientes);
+                if (btnLimparBusca) {
+                    btnLimparBusca.style.display = 'inline-block';
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao buscar clientes:', error);
+                alert('Erro ao buscar clientes. Tente novamente.');
+            });
+    }
+
+    // Função para exibir clientes na tabela
+    function exibirClientes(clientes) {
+        const tbodyClientes = document.getElementById('tbodyClientes');
+        tbodyClientes.innerHTML = '';
+        
+        if (clientes.length === 0) {
+            const tr = document.createElement('tr');
+            const td = document.createElement('td');
+            const isMobile = window.innerWidth <= 768;
+            const colspan = isMobile ? 4 : 6;
+            td.setAttribute('colspan', colspan);
+            td.textContent = 'Nenhum cliente encontrado';
+            td.style.textAlign = 'center';
+            td.style.padding = '2rem';
+            td.style.color = '#999';
+            tr.appendChild(td);
+            tbodyClientes.appendChild(tr);
+            return;
+        }
+        
+        clientes.forEach(cliente => {
+            const tr = document.createElement('tr');
+            const tdId = document.createElement('td');
+            tdId.textContent = cliente.id;
+            const tdNome = document.createElement('td');
+            tdNome.textContent = cliente.nome;
+            const tdCpf = document.createElement('td');
+            tdCpf.textContent = cliente.cpf;                
+            const tdData = document.createElement('td');
+            const dataFormatada = cliente.dataNascimento ? 
+            cliente.dataNascimento.split('-').reverse().join('/') : '-';
+            tdData.textContent = dataFormatada;
+            const tdEndereco = document.createElement('td');
+            tdEndereco.textContent = cliente.endereco || '-';
+            const tdAcoes = document.createElement('td');
+            tdAcoes.className = 'td-acoes';
+            
+            // Container para organizar os botões em 2 linhas
+            const containerBotoes = document.createElement('div');
+            containerBotoes.className = 'botoes-container';
+            
+            // Primeira linha: Adicionar Contato e Ver Contatos
+            const btnAdicionarContato = document.createElement('button');
+            btnAdicionarContato.textContent = '➕ Contato';
+            btnAdicionarContato.className = 'btn-contato';
+            btnAdicionarContato.onclick = function() {
+                abrirModalAdicionarContato(cliente);
+            };
+
+            const btnVerContatos = document.createElement('button');
+            btnVerContatos.textContent = '👁️ Contatos';
+            btnVerContatos.className = 'btn-ver-contatos';
+            btnVerContatos.onclick = function() {
+                abrirModalVerContatos(cliente);
+            };
+
+            // Segunda linha: Editar e Excluir
+            const btnEditar = document.createElement('button');
+            btnEditar.textContent = 'Editar';
+            btnEditar.className = 'btn-editar';
+            btnEditar.onclick = function() {
+                abrirModalEditar(cliente);
+            };
+
+            const btnExcluir = document.createElement('button');
+            btnExcluir.textContent = 'Excluir';
+            btnExcluir.className = 'btn-excluir';
+            btnExcluir.onclick = function() {
+                excluirCliente(cliente.id, cliente.nome);
+            };
+            
+            containerBotoes.appendChild(btnAdicionarContato);
+            containerBotoes.appendChild(btnVerContatos);
+            containerBotoes.appendChild(btnEditar);
+            containerBotoes.appendChild(btnExcluir);
+            
+            tdAcoes.appendChild(containerBotoes);
+            
+            
+            // Adicionar células ao tr
+            tr.appendChild(tdId);
+            tr.appendChild(tdNome);
+            tr.appendChild(tdCpf);
+            tr.appendChild(tdData);
+            tr.appendChild(tdEndereco);
+            tr.appendChild(tdAcoes);
+            
+            // Adicionar tr ao tbody
+            tbodyClientes.appendChild(tr);
+        });
+    }
+
     function carregarClientes() {
         fetch('/clientes')
         .then(response => response.json())
         .then(clientes => {
-            tbodyClientes.innerHTML = '';
-            if (clientes.length === 0) {
-                const tr = document.createElement('tr');
-                const td = document.createElement('td');
-                const isMobile = window.innerWidth <= 768;
-                const colspan = isMobile ? 4 : 6;
-                td.setAttribute('colspan', colspan);
-                td.textContent = 'Nenhum cliente cadastrado';
-                td.style.textAlign = 'center';
-                td.style.padding = '2rem';
-                td.style.color = '#999';
-                tr.appendChild(td);
-                tbodyClientes.appendChild(tr);
-                return;
-            }
-            clientes.forEach(cliente => {
-                const tr = document.createElement('tr');
-                const tdId = document.createElement('td');
-                tdId.textContent = cliente.id;
-                const tdNome = document.createElement('td');
-                tdNome.textContent = cliente.nome;
-                const tdCpf = document.createElement('td');
-                tdCpf.textContent = cliente.cpf;                
-                const tdData = document.createElement('td');
-                const dataFormatada = cliente.dataNascimento ? 
-                cliente.dataNascimento.split('-').reverse().join('/') : '-';
-                tdData.textContent = dataFormatada;
-                const tdEndereco = document.createElement('td');
-                tdEndereco.textContent = cliente.endereco || '-';
-                const tdAcoes = document.createElement('td');
-                tdAcoes.className = 'td-acoes';
-                
-                // Container para organizar os botões em 2 linhas
-                const containerBotoes = document.createElement('div');
-                containerBotoes.className = 'botoes-container';
-                
-                // Primeira linha: Adicionar Contato e Ver Contatos
-                const btnAdicionarContato = document.createElement('button');
-                btnAdicionarContato.textContent = '➕ Contato';
-                btnAdicionarContato.className = 'btn-contato';
-                btnAdicionarContato.onclick = function() {
-                    abrirModalAdicionarContato(cliente);
-                };
-
-                const btnVerContatos = document.createElement('button');
-                btnVerContatos.textContent = '👁️ Contatos';
-                btnVerContatos.className = 'btn-ver-contatos';
-                btnVerContatos.onclick = function() {
-                    abrirModalVerContatos(cliente);
-                };
-
-                // Segunda linha: Editar e Excluir
-                const btnEditar = document.createElement('button');
-                btnEditar.textContent = 'Editar';
-                btnEditar.className = 'btn-editar';
-                btnEditar.onclick = function() {
-                    abrirModalEditar(cliente);
-                };
-
-                const btnExcluir = document.createElement('button');
-                btnExcluir.textContent = 'Excluir';
-                btnExcluir.className = 'btn-excluir';
-                btnExcluir.onclick = function() {
-                    excluirCliente(cliente.id, cliente.nome);
-                };
-                
-                containerBotoes.appendChild(btnAdicionarContato);
-                containerBotoes.appendChild(btnVerContatos);
-                containerBotoes.appendChild(btnEditar);
-                containerBotoes.appendChild(btnExcluir);
-                
-                tdAcoes.appendChild(containerBotoes);
-                
-                
-                // Adicionar células ao tr
-                tr.appendChild(tdId);
-                tr.appendChild(tdNome);
-                tr.appendChild(tdCpf);
-                tr.appendChild(tdData);
-                tr.appendChild(tdEndereco);
-                tr.appendChild(tdAcoes);
-                
-                // Adicionar tr ao tbody
-                tbodyClientes.appendChild(tr);
-            });
+            exibirClientes(clientes);
         })
         .catch(error => {
             console.error('Erro ao carregar clientes:', error);
@@ -207,7 +272,13 @@ document.addEventListener('DOMContentLoaded', function(){
                 if (response.ok) {
                     alert('Cliente atualizado com sucesso!');
                     fecharModalEditar();
-                    carregarClientes();
+                    // Verificar se há busca ativa
+                    const termo = document.getElementById('campoBusca').value.trim();
+                    if (termo) {
+                        buscarClientes();
+                    } else {
+                        carregarClientes();
+                    }
                 } else {
                     return response.json().then(function(data) {
                         let mensagem = 'Erro ao atualizar cliente.';
