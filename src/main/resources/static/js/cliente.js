@@ -13,6 +13,58 @@ document.addEventListener('DOMContentLoaded', function() {
     const hoje = new Date().toISOString().split('T')[0];
     dataNascimento.setAttribute('max', hoje);
 
+    function aplicarMascaraCPF(valor) {
+        const apenasNumeros = valor.replace(/\D/g, '');
+        const cpfLimitado = apenasNumeros.substring(0, 11);
+        
+        if (cpfLimitado.length <= 3) {
+            return cpfLimitado;
+        } else if (cpfLimitado.length <= 6) {
+            return cpfLimitado.substring(0, 3) + '.' + cpfLimitado.substring(3);
+        } else if (cpfLimitado.length <= 9) {
+            return cpfLimitado.substring(0, 3) + '.' + cpfLimitado.substring(3, 6) + '.' + cpfLimitado.substring(6);
+        } else {
+            return cpfLimitado.substring(0, 3) + '.' + cpfLimitado.substring(3, 6) + '.' + cpfLimitado.substring(6, 9) + '-' + cpfLimitado.substring(9);
+        }
+    }
+
+    function validarCPF(cpfComMascara) {
+        const cpf = cpfComMascara.replace(/\D/g, '');
+        return cpf.length === 11;
+    }
+
+    if (cpf) {
+        cpf.addEventListener('input', function(e) {
+            const novoValor = aplicarMascaraCPF(this.value);
+            this.value = novoValor;
+            
+            if (this.classList.contains('error') && validarCPF(novoValor)) {
+                this.classList.remove('error');
+            }
+        });
+
+        cpf.addEventListener('blur', function() {
+            const valor = this.value.trim();
+            if (valor && !validarCPF(valor)) {
+                this.classList.add('error');
+                
+                let mensagemErro = this.parentElement.querySelector('.error-message');
+                if (!mensagemErro) {
+                    mensagemErro = document.createElement('span');
+                    mensagemErro.className = 'error-message';
+                    this.parentElement.appendChild(mensagemErro);
+                }
+                mensagemErro.textContent = 'CPF deve ter 11 dígitos.';
+            } else {
+                this.classList.remove('error');
+                const mensagemErro = this.parentElement.querySelector('.error-message');
+                if (mensagemErro) {
+                    mensagemErro.remove();
+                }
+            }
+        });
+    }
+
     const todosInputs = form.querySelectorAll('input');
     todosInputs.forEach(function(input){
         input.addEventListener('input', function () {
@@ -45,9 +97,19 @@ document.addEventListener('DOMContentLoaded', function() {
             nome.classList.add('error');
             formularioValido = false;
         }
-        if (!cpf.validity.valid) {
+        // Valida CPF
+        const cpfValue = cpf.value.trim();
+        if (!cpfValue || !validarCPF(cpfValue)) {
             cpf.classList.add('error');
             formularioValido = false;
+            // Mostra mensagem de erro se não existir
+            let mensagemErro = cpf.parentElement.querySelector('.error-message');
+            if (!mensagemErro) {
+                mensagemErro = document.createElement('span');
+                mensagemErro.className = 'error-message';
+                cpf.parentElement.appendChild(mensagemErro);
+            }
+            mensagemErro.textContent = cpfValue ? 'CPF deve ter 11 dígitos.' : 'CPF é obrigatório.';
         }
         if (!dataNascimento.validity.valid || !validarDataAnterior(dataNascimento.value)) {
             dataNascimento.classList.add('error');
@@ -72,7 +134,9 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(function(response) {
             if (!response.ok) {
-                throw new Error('Erro ao salvar cliente: ' + response.status);
+                return response.text().then(function(mensagem) {
+                    throw { status: response.status, message: mensagem };
+                });
             }
             return response.json();
         })
@@ -82,7 +146,20 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(function(error) {
             console.error('Erro:', error);
-            alert('Erro ao cadastrar cliente. Tente novamente.');
+            if (error.status === 400 && error.message && error.message.includes('já cadastrado')) {
+                cpf.classList.add('error');
+                let mensagemErro = cpf.parentElement.querySelector('.error-message');
+                if (!mensagemErro) {
+                    mensagemErro = document.createElement('span');
+                    mensagemErro.className = 'error-message';
+                    cpf.parentElement.appendChild(mensagemErro);
+                }
+                mensagemErro.textContent = 'CPF já cadastrado.';
+                alert('Este CPF já está cadastrado no sistema.');
+            } else {
+                const mensagem = error.message || 'Erro ao cadastrar cliente. Tente novamente.';
+                alert(mensagem);
+            }
         })
     });
 });
