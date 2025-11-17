@@ -110,10 +110,13 @@ if "%DB_USER%"=="" set DB_USER=root
 
 set /p DB_PASS="Senha MySQL: "
 
+REM Configurar codepage para UTF-8
+chcp 65001 >nul 2>&1
+
 echo.
 echo Criando banco de dados e tabelas...
 echo Executando: %SCRIPTS_DIR%\01-create-database.sql
-%MYSQL_CMD% -u %DB_USER% -p%DB_PASS% < "%SCRIPTS_DIR%\01-create-database.sql"
+%MYSQL_CMD% -u %DB_USER% -p%DB_PASS% --default-character-set=utf8mb4 < "%SCRIPTS_DIR%\01-create-database.sql"
 if errorlevel 1 (
     echo.
     echo ERRO ao criar banco de dados!
@@ -131,7 +134,7 @@ echo.
 
 echo Populando banco de dados com dados de exemplo...
 echo Executando: %SCRIPTS_DIR%\02-populate-database.sql
-%MYSQL_CMD% -u %DB_USER% -p%DB_PASS% < "%SCRIPTS_DIR%\02-populate-database.sql"
+%MYSQL_CMD% -u %DB_USER% -p%DB_PASS% --default-character-set=utf8mb4 < "%SCRIPTS_DIR%\02-populate-database.sql"
 if errorlevel 1 (
     echo.
     echo ERRO ao popular banco de dados!

@@ -110,7 +110,7 @@ echo ""
 echo ""
 echo "Criando banco de dados e tabelas..."
 echo "Executando: $SCRIPTS_DIR/01-create-database.sql"
-$MYSQL_CMD -u "$DB_USER" -p"$DB_PASS" < "$SCRIPTS_DIR/01-create-database.sql"
+$MYSQL_CMD -u "$DB_USER" -p"$DB_PASS" --default-character-set=utf8mb4 < "$SCRIPTS_DIR/01-create-database.sql"
 if [ $? -ne 0 ]; then
     echo ""
     echo "ERRO ao criar banco de dados!"
@@ -128,7 +128,7 @@ echo ""
 
 echo "Populando banco de dados com dados de exemplo..."
 echo "Executando: $SCRIPTS_DIR/02-populate-database.sql"
-$MYSQL_CMD -u "$DB_USER" -p"$DB_PASS" < "$SCRIPTS_DIR/02-populate-database.sql"
+$MYSQL_CMD -u "$DB_USER" -p"$DB_PASS" --default-character-set=utf8mb4 < "$SCRIPTS_DIR/02-populate-database.sql"
 if [ $? -ne 0 ]; then
     echo ""
     echo "ERRO ao popular banco de dados!"
