@@ -156,7 +156,28 @@ crud-cliente/
 └── pom.xml
 ```
 
-## 🧪 Dados de Teste
+## 🧪 Testes Automatizados
+
+O projeto inclui testes automatizados para garantir a qualidade do código:
+
+### Executar todos os testes:
+```bash
+# Windows
+mvnw.cmd test
+
+# Linux/Mac
+./mvnw test
+```
+
+### Cobertura de Testes:
+- ✅ **Testes Unitários** - Services (ClienteService, ContatoService)
+- ✅ **Testes de Integração** - Controllers REST (ClienteController, ContatoController)
+- ✅ **Validações** - Testes de regras de negócio e validações
+- ✅ **Casos de Erro** - Testes de exceções e erros
+
+**📖 Para mais detalhes:** [src/test/README.md](src/test/README.md)
+
+## 📊 Dados de Teste
 
 O script de população (`02-populate-database.sql`) cria:
 - **8 clientes** de exemplo
