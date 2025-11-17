@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Clientes</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <h1>Agenda de Clientes</h1>
+        </div>
+        <div class = "nav-links">
+            <a href="/">🏠Home</a>
+            <a href="/adicionar-cliente.html">➕ Adicionar Cliente</a>
+        </div>
+    </nav>
+    <header>
+        <h1>Gestão de Clientes e Contatos</h1>
+    </header>
+    <div class="cliente-card">
+        <div class="container">
+            <div class="cliente-list">
+                <h2>Lista de Clientes</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>CPF</th>
+                            <th>Data de Nascimento</th>
+                            <th>Endereço</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyClientes">
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        
+    </div>
+
+    <script src="js/cliente.js"></script>
+    <script src="js/contato.js"></script>
+    </body>
+</html>
