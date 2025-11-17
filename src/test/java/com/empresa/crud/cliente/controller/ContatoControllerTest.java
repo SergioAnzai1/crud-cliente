@@ -10,7 +10,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -30,11 +31,24 @@ class ContatoControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Autowired
     private ContatoService contatoService;
 
-    @MockBean
+    @Autowired
     private ClienteService clienteService;
+
+    @TestConfiguration
+    static class TestConfig {
+        @Bean
+        public ContatoService contatoService() {
+            return mock(ContatoService.class);
+        }
+
+        @Bean
+        public ClienteService clienteService() {
+            return mock(ClienteService.class);
+        }
+    }
 
     @Autowired
     private ObjectMapper objectMapper;
